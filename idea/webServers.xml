@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="69b432ca-6fa3-4061-a53d-68fbd59b369c" name="kddcup2024">
+        <fileTransfer rootFolder="/home/lingdan/disk1/kddcup2024" accessType="SFTP" host="58.199.161.154" port="7722" sshConfigId="9722de0f-32d3-40b9-9431-90555818e741" sshConfig="lingdan@58.199.161.154:7722 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="dab80744-94fb-4c8d-a2cb-a4a914c80d9f" name="kddcup">
+        <fileTransfer rootFolder="/home/lingdan/disk1/kddcup2024" accessType="SFTP" host="10.0.65.51" port="7722" sshConfigId="f7077229-7fb0-489f-9817-a7634e20db8f" sshConfig="lingdan@10.0.65.51:7722 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

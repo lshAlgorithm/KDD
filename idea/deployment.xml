@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="lingdan@10.0.65.51:7722 password" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="kddcup">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="kddcup2024">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="lingdan@10.0.65.51:7722 password">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/lingdan/disk1/kddcup2024" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="lingdan@58.199.161.154:7722 password">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/lingdan/disk1/kddcup2024" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="lingdan@58.199.161.154:7722 password (1)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/lingdan/disk1/kddcup2024" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="lingdan@58.199.161.154:7722 password (2)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/lingdan/disk1/kddcup2024" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="root@58.199.161.175:3022 password">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="root@58.199.161.175:3022 password (1)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>
