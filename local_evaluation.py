@@ -66,14 +66,11 @@ def generate_model_outputs_lsh(data_df, model):
         # added by lsh
         print(type(task_group_data_df))
         print(task_group_data_df)
+        print()
         
         # 检查任务类型是否为多项选择
         is_multiple_choice = task_type[0] == "multiple-choice"
 
-        '''
-        modified by lsh
-        for error "AttributeError: 'LlamaForQuestionAnswering' object has no attribute 'get_batch_size'"
-        '''
         # 确定每个批次的大小
         # batch_size = model.get_batch_size()
         batch_size = 1
@@ -85,7 +82,7 @@ def generate_model_outputs_lsh(data_df, model):
             batch = {
                 "prompt": batch_df["input_field"].tolist(),
             }
-            model_output = model.batch_predict(
+            model_output = model.batch_predict( # no such function, geeeze
                     batch, 
                     is_multiple_choice
                 )
@@ -128,10 +125,6 @@ def generate_model_outputs(data_df, model):
         # 检查任务类型是否为多项选择
         is_multiple_choice = task_type[0] == "multiple-choice"
 
-        '''
-        modified by lsh
-        for error "AttributeError: 'LlamaForQuestionAnswering' object has no attribute 'get_batch_size'"
-        '''
         # 确定每个批次的大小
         batch_size = model.get_batch_size()
         # batch_size = 1
