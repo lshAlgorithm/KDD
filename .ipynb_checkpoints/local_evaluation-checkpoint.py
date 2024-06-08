@@ -9,7 +9,7 @@ import torch
 from tqdm import tqdm
 import logging
 logger = logging.getLogger(__name__)
-#logging.basicConfig(format='[INFO] %(asctime)s - %(message)s', levl=logging.INFO)
+logging.basicConfig(format='[INFO] %(asctime)s - %(message)s',level=logging.INFO)
 VERSION = "0.1.0"
 
 
@@ -41,6 +41,60 @@ def load_development_data(filename):
     """
     return pd.read_json(filename, lines=True)
 
+# Function to generate model outputs based on the input data
+def generate_model_outputs_lsh(data_df, model):
+    """
+    Generate predictions for each entry in the data DataFrame using a given model.
+
+    Parameters:
+    - data_df: A pandas DataFrame containing the input data for predictions.
+    - model: The model instance used for generating predictions.
+
+    Returns:
+    - A list containing the model outputs for each entry in the data DataFrame.
+    """
+    # 用于存储每个批次的预测结果
+    outputs = []
+    # 按任务类型分组
+    task_grouped_df = data_df.groupby(by=["task_type"])
+    
+    #  遍历每个任务类型
+    for task_type, task_group_data_df in task_grouped_df:
+        # 重置索引以简化后续的批处理操作
+        task_group_data_df = task_group_data_df.reset_index(drop=True)
+        
+        # added by lsh
+        print(type(task_group_data_df))
+        print(task_group_data_df)
+        print()
+        
+        # 检查任务类型是否为多项选择
+        is_multiple_choice = task_type[0] == "multiple-choice"
+
+        # 确定每个批次的大小
+        # batch_size = model.get_batch_size()
+        batch_size = 1
+        
+        # 将任务数据分成多个批次
+        batches = [task_group_data_df[i:i+batch_size] for i in range(0,len(task_group_data_df),batch_size)]
+        
+        for batch_df in batches:
+            batch = {
+                "prompt": batch_df["input_field"].tolist(),
+            }
+            model_output = model.batch_predict( # no such function, geeeze
+                    batch, 
+                    is_multiple_choice
+                )
+            outputs.append(
+                pd.DataFrame({
+                    "input_field": batch["prompt"],
+                    "model_output_str": model_output
+                }))
+    
+    # 将所有批次的输出合并成一个DataFrame
+    df_outputs = pd.concat(outputs)
+    return df_outputs
 
 # Function to generate model outputs based on the input data
 def generate_model_outputs(data_df, model):
@@ -63,14 +117,17 @@ def generate_model_outputs(data_df, model):
     for task_type, task_group_data_df in task_grouped_df:
         # 重置索引以简化后续的批处理操作
         task_group_data_df = task_group_data_df.reset_index(drop=True)
-
+        
+        # added by lsh
         print(type(task_group_data_df))
         print(task_group_data_df)
         
         # 检查任务类型是否为多项选择
         is_multiple_choice = task_type[0] == "multiple-choice"
+
         # 确定每个批次的大小
         batch_size = model.get_batch_size()
+        # batch_size = 1
         
         # 将任务数据分成多个批次
         batches = [task_group_data_df[i:i+batch_size] for i in range(0,len(task_group_data_df),batch_size)]
@@ -91,6 +148,10 @@ def generate_model_outputs(data_df, model):
     
     # 将所有批次的输出合并成一个DataFrame
     df_outputs = pd.concat(outputs)
+    print('*' * 100)
+    print(type(df_outputs))
+    print(df_outputs)
+    print('*' * 100)
     return df_outputs
 
 
@@ -277,6 +338,11 @@ def main():
 
     data_df = load_development_data(DATA_FILENAME)
 
+
+    logger.info("&"*100)
+    logger.info("data_df")
+    logger.info(type(data_df))
+    logger.info(data_df)
     # Load the model from the user's custom configuration
     # Note: The evaluator **Always** imports the UserModel, please reference your own class
     # by setting the `UserModel` variable in models.user_config
@@ -284,13 +350,44 @@ def main():
 
     model = UserModel()
 
+
+    tokenizer = model.tokenizer
+    
+    raw_data = data_df.groundby(by=['track'])
+
+    for task_type, task_ground_data_df in raw_data:
+        if task_type != 'amazon-kdd-cup-24-shopping-knowledge-reasoning':
+            continue
+        # data_mygo.
+    
+
+
+    # Parameters
+    from transformers import TrainingArguments
+
+    training_args = TrainingArguments("./models/meta-llama/Meta-Llama-3-8B-Instruct")
+    
+    from transformers import Trainer
+
+    trainer = Trainer(
+            model, 
+            training_args,
+            train_dataset=tokens['train'],
+            eval_dataset=token[''],
+            data_collator=data_collator,
+            tokenizer=tokenizer,
+            )
+
+
+
     # Generate model outputs
     df_outputs = generate_model_outputs(data_df, model)
     
     # add outputs to the data_df
     merged_data_df = pd.merge(data_df, df_outputs, on="input_field")
-        
-    print(merged_data_df.head())
+       
+    logger.info("merged_data_df.head()")
+    logger.info(merged_data_df.head())
     
     '''
     print("--- look up ----")
@@ -314,5 +411,4 @@ def main():
 
 if __name__ == "__main__":
     logger.info("new round")
-    time.sleep(30)
     main()

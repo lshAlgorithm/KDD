@@ -320,6 +320,9 @@ def get_task_parsers():
         ),
     }
 
+from datasets import load_dataset
+def tokenize_func(example):
+    return tokenizer(example['input_field'], truncation=True)
 
 # Main execution function to load data, generate model outputs, evaluate, and aggregate scores
 def main():
@@ -338,20 +341,52 @@ def main():
 
     data_df = load_development_data(DATA_FILENAME)
 
+
+    logger.info("&"*100)
+    logger.info("data_df")
+    logger.info(type(data_df))
+    logger.info(data_df)
     # Load the model from the user's custom configuration
     # Note: The evaluator **Always** imports the UserModel, please reference your own class
     # by setting the `UserModel` variable in models.user_config
     from models.user_config import UserModel
+    from transformers import TrainingArguments, Trainer, DataCollatorWithPadding
+    from datasets import Dataset
 
     model = UserModel()
+
+
+    tokenizer = model.tokenizer
+    
+    raw_data = Dataset.from_json('./data/formal_json.json') 
+    tokens = raw_data.map(tokenize_func, batch=True)
+    data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
+    
+    print("tokens:---------->")
+    print(tokens)
+
+    # Parameters
+    training_args = TrainingArguments("./models/meta-llama/Meta-Llama-3-8B-Instruct")
+
+    trainer = Trainer(
+            model, 
+            training_args,
+            train_dataset=tokens,
+            eval_dataset=tokens,
+            data_collator=data_collator,
+            tokenizer=tokenizer,
+            )
+    trainer.train()
+
 
     # Generate model outputs
     df_outputs = generate_model_outputs(data_df, model)
     
     # add outputs to the data_df
     merged_data_df = pd.merge(data_df, df_outputs, on="input_field")
-        
-    print(merged_data_df.head())
+       
+    logger.info("merged_data_df.head()")
+    logger.info(merged_data_df.head())
     
     '''
     print("--- look up ----")
