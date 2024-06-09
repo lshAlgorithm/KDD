@@ -27,10 +27,10 @@ UserModel = DummyModel
 # please remember to download the model weights and checking them into the repository 
 # before submitting
 
-choice = 2
+choice = 0
 
 from transformers.models.llama.modeling_llama import LlamaForQuestionAnswering
-from transformers import LlamaModel, LlamaConfig
+from transformers import LlamaModel, LlamaConfig, AutoTokenizer
 from models.vanilla_llama3_baseline import Llama3_8B_ZeroShotModel
 from models.Llama3_8B_ZeroShotModel_Mygo import Llama3_8B_ZeroShotModel_Mygo
 # Initializing a LLaMA llama-7b style configuration
@@ -42,8 +42,12 @@ checkpoint = "./models/meta-llama/Meta-Llama-3-8B-Instruct"
 # print(configuration)
 
 if choice == 0:
-    UserModel = LlamaForQuestionAnswering.from_pretrained(checkpoint)
+    model = LlamaForQuestionAnswering.from_pretrained(checkpoint, use_safetensors=True)
+    #model = AutoModelForQuestionAnswering.from_pretrained(checkpoint, use_safetensors=True)
+    tokenizer = AutoTokenizer.from_pretrained(checkpoint, use_safetensors=True)
 elif choice == 1:
-    UserModel = Llama3_8B_ZeroShotModel
+    model = Llama3_8B_ZeroShotModel
+    tokenizer = model.tokenizer
 else:
-    UserModel = Llama3_8B_ZeroShotModel_Mygo
+    model = Llama3_8B_ZeroShotModel_Mygo
+    tokenizer = model.tokenizer
