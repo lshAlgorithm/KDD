@@ -5,6 +5,12 @@ from typing import Any, Dict, List
 import vllm
 from models.vanilla_llama3_baseline import Llama3_8B_ZeroShotModel
 from models.base_model import ShopBenchBaseModel
+# from huggingface_hub import snapshot_download
+from vllm.lora.request import LoRARequest
+# sql_lora_path = './models/meta-llama/Meta-Llama-3-8B-Instruct'
+from huggingface_hub import snapshot_download
+
+sql_lora_path = snapshot_download(repo_id="yard1/llama-2-7b-sql-lora-test")
 AICROWD_RUN_SEED = int(os.getenv("AICROWD_RUN_SEED", 773815))
 
 # Batch size you wish the evaluators will use to call the `batch_generate_answer` function
@@ -51,7 +57,8 @@ class Llama3_8B_ZeroShotModel_Mygo(ShopBenchBaseModel):
             gpu_memory_utilization=VLLM_GPU_MEMORY_UTILIZATION,
             trust_remote_code=True,
             dtype="half",  # note: bfloat16 is not supported on nvidia-T4 GPUs
-            enforce_eager=True
+            enforce_eager=True,
+            enable_lora=True
         )
         self.tokenizer = self.llm.get_tokenizer()
         print("加载到这里")
@@ -111,15 +118,10 @@ class Llama3_8B_ZeroShotModel_Mygo(ShopBenchBaseModel):
                 temperature=0,  # randomness of the sampling
                 seed=AICROWD_RUN_SEED,  # Seed for reprodicibility
                 skip_special_tokens=True,  # Whether to skip special tokens in the output.
-                max_tokens=max_new_tokens,  # Maximum number of tokens to generate per output sequence.
-                
-                use_beam_search = True,
-                length_penalty = 0.1,
-                early_stopping = 'never',
-                best_of = 5,
-                
+                max_tokens=max_new_tokens  # Maximum number of tokens to generate per output sequence.
             ),
-            use_tqdm=False
+            use_tqdm=False,
+            lora_request=LoRARequest('sql_adapter', 1, sql_lora_path)
         )
         # Aggregate answers into List[str]
         batch_response = []

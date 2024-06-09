@@ -151,10 +151,6 @@ def generate_model_outputs(data_df, model):
     
     # 将所有批次的输出合并成一个DataFrame
     df_outputs = pd.concat(outputs)
-    print('*' * 100)
-    print(type(df_outputs))
-    print(df_outputs)
-    print('*' * 100)
     return df_outputs
 
 
@@ -334,6 +330,7 @@ def main():
     # and place it at: ./data/development.json
     DATA_FILENAME = "./data/modified.json"
     DATA_FILENAME = "./data/development.json"
+    DATA_FILENAME = "./data/yhx.json"
 
     if not os.path.exists(DATA_FILENAME):
         raise FileNotFoundError(
@@ -344,7 +341,7 @@ def main():
 
     data_df = load_development_data(DATA_FILENAME)
 
-
+    '''
     logger.info("&"*100)
     logger.info("data_df")
     logger.info(type(data_df))
@@ -370,6 +367,7 @@ def main():
     print('*'*100)
 
     batch_size = 8
+    batch_size = 1
     # Parameters
     # training_args = TrainingArguments("./models/meta-llama/Meta-Llama-3-8B-Instruct")
     training_args = TrainingArguments(
@@ -393,6 +391,7 @@ def main():
     trainer.train()
     trainer.save_model("KDD-trained")
     logger.info(':)' * 100)
+    '''
     # Generate model outputs
     df_outputs = generate_model_outputs(data_df, model)
     
