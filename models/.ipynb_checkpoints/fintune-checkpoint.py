@@ -1,11 +1,12 @@
 import os
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, Trainer, TrainingArguments, DataCollatorForSeq2Seq 
+from transformers import AutoTokenizer, AutoModelForCausalLM, Trainer, TrainingArguments
 import pandas as pd
 from datasets import Dataset
 import json
 
 from peft import LoraConfig, TaskType
+'''
 config = LoraConfig(
         task_type=TaskType.CAUSAL_LM,
         target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
@@ -14,8 +15,9 @@ config = LoraConfig(
         lora_alpha=32, # Lora alaph，具体作用参见 Lora 原理
         lora_dropout=0.1# Dropout 比例
     )
+'''
 
-model_name = './models/meta-llama/Meta-Llama-3-8B-Instruct'
+model_name = 'Meta-Llama-3-8B-Instruct'
 
 tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False, trust_remote_code=True)
 tokenizer.pad_token = tokenizer.eos_token
@@ -67,8 +69,7 @@ def main():
 
     args = TrainingArguments(
         output_dir="./models/fine_tune",
-        # per_device_train_batch_size=1,
-        auto_find_batch_size=True,
+        per_device_train_batch_size=4,
         gradient_accumulation_steps=4,
         logging_steps=10,
         num_train_epochs=3,
