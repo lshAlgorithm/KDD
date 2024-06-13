@@ -45,7 +45,7 @@ def process_func(data):
 def main():
     # Process the data
     df = pd.DataFrame(columns=['input_ids', 'attention_mask', 'labels'])
-    with open('./data/development.json') as file:
+    with open('./data/yhx.json') as file:
         for i, line in enumerate(file):
             dic = process_func(line)
             df = pd.concat([df, pd.DataFrame(dic)], ignore_index=True)
@@ -67,7 +67,7 @@ def main():
 
     args = TrainingArguments(
         output_dir="./models/fine_tune",
-        # per_device_train_batch_size=1,
+        #per_device_train_batch_size=1,
         auto_find_batch_size=True,
         gradient_accumulation_steps=4,
         logging_steps=10,
@@ -75,7 +75,8 @@ def main():
         save_steps=100,
         learning_rate=1e-4,
         save_on_each_node=True,
-        gradient_checkpointing=True
+        gradient_checkpointing=True,
+        no_cuda=True
     )
 
     trainer = Trainer(
@@ -85,11 +86,11 @@ def main():
         data_collator=DataCollatorForSeq2Seq(tokenizer=tokenizer, padding=True),
     )
 
+    trainer.train()
+    
     lora_path = './models/fine_tune_lora'
     trainer.model.save_pretrained(lora_path)
     tokenizer.save_pretrained(lora_path)
-
-    trainer.train()
 
 
 if __name__ == '__main__':

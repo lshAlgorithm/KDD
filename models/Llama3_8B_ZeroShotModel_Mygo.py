@@ -10,7 +10,6 @@ from vllm.lora.request import LoRARequest
 # sql_lora_path = './models/meta-llama/Meta-Llama-3-8B-Instruct'
 from huggingface_hub import snapshot_download
 
-sql_lora_path = snapshot_download(repo_id="yard1/llama-2-7b-sql-lora-test")
 AICROWD_RUN_SEED = int(os.getenv("AICROWD_RUN_SEED", 773815))
 
 # Batch size you wish the evaluators will use to call the `batch_generate_answer` function
