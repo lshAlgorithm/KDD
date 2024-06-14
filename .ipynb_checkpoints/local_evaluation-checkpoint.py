@@ -8,6 +8,9 @@ import parsers
 import torch
 from tqdm import tqdm
 import logging
+from models.user_config import UserModel, model, tokenizer
+from transformers import TrainingArguments, Trainer, DataCollatorWithPadding,AutoModelForCausalLM, AutoTokenizer
+from datasets import Dataset
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='[INFO] %(asctime)s - %(message)s',level=logging.INFO)
 VERSION = "0.1.0"
@@ -148,10 +151,6 @@ def generate_model_outputs(data_df, model):
     
     # 将所有批次的输出合并成一个DataFrame
     df_outputs = pd.concat(outputs)
-    print('*' * 100)
-    print(type(df_outputs))
-    print(df_outputs)
-    print('*' * 100)
     return df_outputs
 
 
@@ -320,6 +319,9 @@ def get_task_parsers():
         ),
     }
 
+from datasets import load_dataset
+def tokenize_func(example):
+    return tokenizer(example['input_field'], truncation=True)
 
 # Main execution function to load data, generate model outputs, evaluate, and aggregate scores
 def main():
@@ -328,6 +330,7 @@ def main():
     # and place it at: ./data/development.json
     DATA_FILENAME = "./data/modified.json"
     DATA_FILENAME = "./data/development.json"
+    DATA_FILENAME = "./data/yhx.json"
 
     if not os.path.exists(DATA_FILENAME):
         raise FileNotFoundError(
@@ -338,7 +341,7 @@ def main():
 
     data_df = load_development_data(DATA_FILENAME)
 
-
+    '''
     logger.info("&"*100)
     logger.info("data_df")
     logger.info(type(data_df))
@@ -346,40 +349,49 @@ def main():
     # Load the model from the user's custom configuration
     # Note: The evaluator **Always** imports the UserModel, please reference your own class
     # by setting the `UserModel` variable in models.user_config
-    from models.user_config import UserModel
 
-    model = UserModel()
+    #data_df = data_df.astype(str) # something that is confusing 
+    raw_data = Dataset.from_pandas(data_df)
+    tokens = raw_data.map(tokenize_func, batched=True)
+    data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
+    print("tokens:---------->")
+    print(tokens)
+    print('*'*100)
 
-    tokenizer = model.tokenizer
-    
-    raw_data = data_df.groundby(by=['track'])
+    tokens = tokens.rename_column('input_field', 'question')
+    tokens = tokens.rename_column('output_field', 'label')
 
-    for task_type, task_ground_data_df in raw_data:
-        if task_type != 'amazon-kdd-cup-24-shopping-knowledge-reasoning':
-            continue
-        # data_mygo.
-    
+    print("modifed tokens:---------->")
+    print(tokens)
+    print('*'*100)
 
-
+    batch_size = 8
+    batch_size = 1
     # Parameters
-    from transformers import TrainingArguments
-
-    training_args = TrainingArguments("./models/meta-llama/Meta-Llama-3-8B-Instruct")
-    
-    from transformers import Trainer
+    # training_args = TrainingArguments("./models/meta-llama/Meta-Llama-3-8B-Instruct")
+    training_args = TrainingArguments(
+        f"test-KDD",
+        evaluation_strategy = "epoch",
+        learning_rate=2e-5,
+        num_train_epochs=3,
+        per_device_train_batch_size=batch_size,
+        per_device_eval_batch_size=batch_size,
+        weight_decay=0.01,
+    )
 
     trainer = Trainer(
-            model, 
-            training_args,
-            train_dataset=tokens['train'],
-            eval_dataset=token[''],
-            data_collator=data_collator,
-            tokenizer=tokenizer,
-            )
-
-
-
+        model,
+        training_args,
+        train_dataset=tokens,
+        eval_dataset=tokens,
+        data_collator=data_collator,
+        tokenizer=tokenizer,
+    )
+    trainer.train()
+    trainer.save_model("KDD-trained")
+    logger.info(':)' * 100)
+    '''
     # Generate model outputs
     df_outputs = generate_model_outputs(data_df, model)
     

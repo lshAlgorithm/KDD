@@ -10,6 +10,10 @@ from vllm.lora.request import LoRARequest
 # sql_lora_path = './models/meta-llama/Meta-Llama-3-8B-Instruct'
 from huggingface_hub import snapshot_download
 
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
+from peft import PeftModel
+
 AICROWD_RUN_SEED = int(os.getenv("AICROWD_RUN_SEED", 773815))
 
 # Batch size you wish the evaluators will use to call the `batch_generate_answer` function
@@ -35,6 +39,7 @@ class Llama3_8B_ZeroShotModel_Mygo(ShopBenchBaseModel):
     def initialize_models(self):
         # Initialize Meta Llama 3 - 8B Instruct Model
         self.model_name = "models/meta-llama/Meta-Llama-3-8B-Instruct"
+        # self.lora_name= "models/fine_tune_lora"
 
         if not os.path.exists(self.model_name):
             raise Exception(
@@ -59,7 +64,15 @@ class Llama3_8B_ZeroShotModel_Mygo(ShopBenchBaseModel):
             enforce_eager=True,
             enable_lora=True
         )
-        self.tokenizer = self.llm.get_tokenizer()
+         self.tokenizer = self.llm.get_tokenizer()
+        # # 加载tokenizer
+        # self.tokenizer = AutoTokenizer.from_pretrained(model)
+
+        # # 加载模型
+        # self.model = AutoModelForCausalLM.from_pretrained(model, device_map="auto",torch_dtype=torch.bfloat16)
+
+        # # 加载lora权重
+        # self.model = PeftModel.from_pretrained(model, model_id=lora_name, config=config)
         print("加载到这里")
 
     def get_batch_size(self) -> int:

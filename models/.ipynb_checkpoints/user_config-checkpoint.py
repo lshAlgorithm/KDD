@@ -27,6 +27,29 @@ UserModel = DummyModel
 # please remember to download the model weights and checking them into the repository 
 # before submitting
 
-from models.vanilla_llama3_baseline import Llama3_8B_ZeroShotModel
-UserModel = Llama3_8B_ZeroShotModel
+choice = 2
 
+from transformers.models.llama.modeling_llama import LlamaForQuestionAnswering
+from transformers import LlamaModel, LlamaConfig, AutoTokenizer, AutoModelForCausalLM
+from models.vanilla_llama3_baseline import Llama3_8B_ZeroShotModel
+from models.Llama3_8B_ZeroShotModel_Mygo import Llama3_8B_ZeroShotModel_Mygo
+# Initializing a LLaMA llama-7b style configuration
+checkpoint = "meta-llama/Meta-Llama-3-8B"
+checkpoint = "models.vanilla_llama3_baseline.Llama3_8B_ZeroShotModel"
+checkpoint = "./models/meta-llama/Meta-Llama-3-8B-Instruct"
+
+# configuration = LlamaConfig.from_pretrained()
+# print(configuration)
+tokenizer = 1
+
+if choice == 0:
+    #model = LlamaForQuestionAnswering.from_pretrained(checkpoint, use_safetensors=True)
+    #model = AutoModelForQuestionAnswering.from_pretrained(checkpoint, use_safetensors=True)
+    model = AutoModelForCausalLM.from_pretrained(checkpoint, use_safetensors=True)
+    tokenizer = AutoTokenizer.from_pretrained(checkpoint, use_safetensors=True)
+elif choice == 1:
+    model = Llama3_8B_ZeroShotModel()
+    # tokenizer = model.tokenizer # well, just a lesson, such syntax can only use for function as attribute not a variable
+else:
+    model = Llama3_8B_ZeroShotModel_Mygo()
+    # tokenizer = model.tokenizer

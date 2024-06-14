@@ -9,7 +9,7 @@ import torch
 from tqdm import tqdm
 import logging
 from models.user_config import UserModel, model, tokenizer
-from transformers import TrainingArguments, Trainer, DataCollatorWithPadding
+from transformers import TrainingArguments, Trainer, DataCollatorWithPadding,AutoModelForCausalLM, AutoTokenizer
 from datasets import Dataset
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='[INFO] %(asctime)s - %(message)s',level=logging.INFO)
