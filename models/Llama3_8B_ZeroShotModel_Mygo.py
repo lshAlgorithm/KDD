@@ -7,7 +7,8 @@ from models.vanilla_llama3_baseline import Llama3_8B_ZeroShotModel
 from models.base_model import ShopBenchBaseModel
 # from huggingface_hub import snapshot_download
 from vllm.lora.request import LoRARequest
-# sql_lora_path = './models/meta-llama/Meta-Llama-3-8B-Instruct'
+from vllm import LLM, SamplingParams
+sql_lora_path = '/hy-tmp/KDD/models/fine_tune_lora'
 from huggingface_hub import snapshot_download
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -39,7 +40,7 @@ class Llama3_8B_ZeroShotModel_Mygo(ShopBenchBaseModel):
     def initialize_models(self):
         # Initialize Meta Llama 3 - 8B Instruct Model
         self.model_name = "models/meta-llama/Meta-Llama-3-8B-Instruct"
-        # self.lora_name= "models/fine_tune_lora"
+        #self.lora_name= "models/fine_tune_lora"
 
         if not os.path.exists(self.model_name):
             raise Exception(
@@ -57,6 +58,7 @@ class Llama3_8B_ZeroShotModel_Mygo(ShopBenchBaseModel):
         # initialize the model with vllm
         self.llm = vllm.LLM(
             self.model_name,
+            #self.lora_name,
             tensor_parallel_size=VLLM_TENSOR_PARALLEL_SIZE,
             gpu_memory_utilization=VLLM_GPU_MEMORY_UTILIZATION,
             trust_remote_code=True,
@@ -64,11 +66,11 @@ class Llama3_8B_ZeroShotModel_Mygo(ShopBenchBaseModel):
             enforce_eager=True,
             enable_lora=True
         )
-         self.tokenizer = self.llm.get_tokenizer()
+        self.tokenizer = self.llm.get_tokenizer()
         # # 加载tokenizer
-        # self.tokenizer = AutoTokenizer.from_pretrained(model)
-
-        # # 加载模型
+        # self.tokenizer = AutoTokenizer.from_pretrained(checkpoint, use_safetensors=True)
+        # print("********************")
+        # 加载模型
         # self.model = AutoModelForCausalLM.from_pretrained(model, device_map="auto",torch_dtype=torch.bfloat16)
 
         # # 加载lora权重

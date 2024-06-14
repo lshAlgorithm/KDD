@@ -52,4 +52,12 @@ elif choice == 1:
     # tokenizer = model.tokenizer # well, just a lesson, such syntax can only use for function as attribute not a variable
 else:
     model = Llama3_8B_ZeroShotModel_Mygo()
-    # tokenizer = model.tokenizer
+    # # 加载tokenizer
+    # self.tokenizer = AutoTokenizer.from_pretrained(checkpoint, use_safetensors=True)
+    # print("********************")
+    # # 加载模型
+    # self.model = AutoModelForCausalLM.from_pretrained(model, device_map="auto",torch_dtype=torch.bfloat16)
+
+    # # 加载lora权重
+    # self.model = PeftModel.from_pretrained(model, model_id=lora_name, config=config)
+    # # tokenizer = model.tokenizer
