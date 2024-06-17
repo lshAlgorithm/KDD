@@ -44,60 +44,6 @@ def load_development_data(filename):
     """
     return pd.read_json(filename, lines=True)
 
-# Function to generate model outputs based on the input data
-def generate_model_outputs_lsh(data_df, model):
-    """
-    Generate predictions for each entry in the data DataFrame using a given model.
-
-    Parameters:
-    - data_df: A pandas DataFrame containing the input data for predictions.
-    - model: The model instance used for generating predictions.
-
-    Returns:
-    - A list containing the model outputs for each entry in the data DataFrame.
-    """
-    # 用于存储每个批次的预测结果
-    outputs = []
-    # 按任务类型分组
-    task_grouped_df = data_df.groupby(by=["task_type"])
-    
-    #  遍历每个任务类型
-    for task_type, task_group_data_df in task_grouped_df:
-        # 重置索引以简化后续的批处理操作
-        task_group_data_df = task_group_data_df.reset_index(drop=True)
-        
-        # added by lsh
-        print(type(task_group_data_df))
-        print(task_group_data_df)
-        print()
-        
-        # 检查任务类型是否为多项选择
-        is_multiple_choice = task_type[0] == "multiple-choice"
-
-        # 确定每个批次的大小
-        # batch_size = model.get_batch_size()
-        batch_size = 1
-        
-        # 将任务数据分成多个批次
-        batches = [task_group_data_df[i:i+batch_size] for i in range(0,len(task_group_data_df),batch_size)]
-        
-        for batch_df in batches:
-            batch = {
-                "prompt": batch_df["input_field"].tolist(),
-            }
-            model_output = model.batch_predict( # no such function, geeeze
-                    batch, 
-                    is_multiple_choice
-                )
-            outputs.append(
-                pd.DataFrame({
-                    "input_field": batch["prompt"],
-                    "model_output_str": model_output
-                }))
-    
-    # 将所有批次的输出合并成一个DataFrame
-    df_outputs = pd.concat(outputs)
-    return df_outputs
 
 # Function to generate model outputs based on the input data
 def generate_model_outputs(data_df, model):
@@ -331,6 +277,7 @@ def main():
     DATA_FILENAME = "./data/modified.json"
     DATA_FILENAME = "./data/development.json"
     DATA_FILENAME = "./data/yhx.json"
+    DATA_FILENAME = "./data/development.json"
 
     if not os.path.exists(DATA_FILENAME):
         raise FileNotFoundError(

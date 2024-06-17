@@ -1,6 +1,7 @@
 import os
 import time
 
+from shared_args import args
 import metrics
 import numpy as np
 import pandas as pd
@@ -8,9 +9,10 @@ import parsers
 import torch
 from tqdm import tqdm
 import logging
-from models.user_config import UserModel, model, tokenizer
+from models.user_config import model
 from transformers import TrainingArguments, Trainer, DataCollatorWithPadding,AutoModelForCausalLM, AutoTokenizer
 from datasets import Dataset
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='[INFO] %(asctime)s - %(message)s',level=logging.INFO)
 VERSION = "0.1.0"
@@ -143,11 +145,13 @@ def evaluate_outputs(data_df, log_every_n_steps=1):
 
         # 使用对应的任务解析器将模型输出字符串解析为可评估的格式
         model_output = task_parsers[task_type].parse(model_output_str)
-
+        
+        '''
         # added by lsh
         logger.info(f'model_output: {model_output}')
         logger.info(f'task_type: {task_name}')
         logger.info(f'model_output_str: {model_output_str}')
+        '''
 
         # 使用相应的评估函数计算得分
         eval_fn = eval_methods[metric]
@@ -265,19 +269,19 @@ def get_task_parsers():
         ),
     }
 
-from datasets import load_dataset
-def tokenize_func(example):
-    return tokenizer(example['input_field'], truncation=True)
-
 # Main execution function to load data, generate model outputs, evaluate, and aggregate scores
 def main():
     # Load development data
     # Please download the development data from : https://www.aicrowd.com/challenges/amazon-kdd-cup-2024-multi-task-online-shopping-challenge-for-llms/dataset_files
     # and place it at: ./data/development.json
-    DATA_FILENAME = "./data/modified.json"
-    DATA_FILENAME = "./data/development.json"
-    DATA_FILENAME = "./data/yhx.json"
-    DATA_FILENAME = "./data/development.json"
+    
+    DATA_FILENAME = ''
+    if args.test == 'origin':
+        DATA_FILENAME = './data/development.json'
+    elif args.test == 'yhx':
+        DATA_FILENAME = './data/yhx-o.json'
+    elif args.test == 'generate':
+        DATA_FILENAME = './data/modified.json'
 
     if not os.path.exists(DATA_FILENAME):
         raise FileNotFoundError(
@@ -287,71 +291,12 @@ def main():
         )
 
     data_df = load_development_data(DATA_FILENAME)
-
-    '''
-    logger.info("&"*100)
-    logger.info("data_df")
-    logger.info(type(data_df))
-    logger.info(data_df)
-    # Load the model from the user's custom configuration
-    # Note: The evaluator **Always** imports the UserModel, please reference your own class
-    # by setting the `UserModel` variable in models.user_config
-
-    #data_df = data_df.astype(str) # something that is confusing 
-    raw_data = Dataset.from_pandas(data_df)
-    tokens = raw_data.map(tokenize_func, batched=True)
-    data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
-
-    print("tokens:---------->")
-    print(tokens)
-    print('*'*100)
-
-    tokens = tokens.rename_column('input_field', 'question')
-    tokens = tokens.rename_column('output_field', 'label')
-
-    print("modifed tokens:---------->")
-    print(tokens)
-    print('*'*100)
-
-    batch_size = 8
-    batch_size = 1
-    # Parameters
-    # training_args = TrainingArguments("./models/meta-llama/Meta-Llama-3-8B-Instruct")
-    training_args = TrainingArguments(
-        f"test-KDD",
-        evaluation_strategy = "epoch",
-        learning_rate=2e-5,
-        num_train_epochs=3,
-        per_device_train_batch_size=batch_size,
-        per_device_eval_batch_size=batch_size,
-        weight_decay=0.01,
-    )
-
-    trainer = Trainer(
-        model,
-        training_args,
-        train_dataset=tokens,
-        eval_dataset=tokens,
-        data_collator=data_collator,
-        tokenizer=tokenizer,
-    )
-    trainer.train()
-    trainer.save_model("KDD-trained")
-    logger.info(':)' * 100)
-    '''
     # Generate model outputs
     df_outputs = generate_model_outputs(data_df, model)
     
     # add outputs to the data_df
     merged_data_df = pd.merge(data_df, df_outputs, on="input_field")
        
-    logger.info("merged_data_df.head()")
-    logger.info(merged_data_df.head())
-    
-    '''
-    print("--- look up ----")
-    time.sleep(30)
-    '''
 
     # Evaluate the generated outputs and calculate metrics
     per_task_metrics = evaluate_outputs(merged_data_df)

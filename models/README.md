@@ -22,6 +22,15 @@ MAX_JOBS=8 pip install flash-attn --no-build-isolation
 * Testing
     * under `myenv` env
     * requirements are in `../requirements.txt`
+    * run under directory `KDD` with basic command `python local_evaluation.py`
+        * `--model` set the model to use, `Mygo` as default, you can also use `origin`
+        * `--test` set dataset for evaluation, `origin` as default, you can also use `yhx` to use `yhx -o`.
+* Result
+    * Find in './result.md'
+
+# Update logs
+* [2024.6.16]Model's name changed to `Llama3_8B_Mygo`
+* [2024.6.16]Add the printing of outputs from the Chatbot.
 # Guide to Writing Your Own Models
 
 ## Model Code Organization

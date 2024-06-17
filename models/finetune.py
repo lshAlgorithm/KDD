@@ -10,8 +10,8 @@ config = LoraConfig(
         task_type=TaskType.CAUSAL_LM,
         target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
         inference_mode=False, # 训练模式
-        r=8, # Lora 秩
-        lora_alpha=32, # Lora alaph，具体作用参见 Lora 原理
+        r=4, # Lora 秩
+        lora_alpha=64, # Lora alaph，具体作用参见 Lora 原理
         lora_dropout=0.1# Dropout 比例
     )
 
@@ -46,7 +46,7 @@ def main():
     global model
     # Process the data
     df = pd.DataFrame(columns=['input_ids', 'attention_mask', 'labels'])
-    with open('./data/yhx.json') as file:
+    with open('./data/yhx-o.json') as file:
         for i, line in enumerate(file):
             dic = process_func(line)
             df = pd.concat([df, pd.DataFrame(dic)], ignore_index=True)
@@ -69,11 +69,11 @@ def main():
 
     args = TrainingArguments(
         output_dir="./models/fine_tune",
-        per_device_train_batch_size=4,
+        per_device_train_batch_size=16,
         # auto_find_batch_size=True,
         gradient_accumulation_steps=4,
-        logging_steps=10,
-        num_train_epochs=3,
+        logging_steps=6,
+        num_train_epochs=4,
         save_steps=100,
         learning_rate=1e-4,
         save_on_each_node=True,

@@ -1,1 +1,7 @@
 *.git
+models/fine_tune/checkpoint-200/*
+models/fine_tune/checkpoint-100/*
+models/fine_tune/checkpoint-300/*
+models/fine_tune/checkpoint-400/*
+models/fine_tune/checkpoint-500/*
+models/fine_tune/checkpoint-600/*
