@@ -46,7 +46,7 @@ def main():
     global model
     # Process the data
     df = pd.DataFrame(columns=['input_ids', 'attention_mask', 'labels'])
-    with open('./data/yhx.json') as file:
+    with open('./data/yhx-o-no_infer.json') as file:
         for i, line in enumerate(file):
             dic = process_func(line)
             df = pd.concat([df, pd.DataFrame(dic)], ignore_index=True)
@@ -69,7 +69,7 @@ def main():
 
     args = TrainingArguments(
         output_dir="./models/fine_tune",
-        per_device_train_batch_size=4,
+        per_device_train_batch_size=2,
         # auto_find_batch_size=True,
         gradient_accumulation_steps=4,
         logging_steps=10,

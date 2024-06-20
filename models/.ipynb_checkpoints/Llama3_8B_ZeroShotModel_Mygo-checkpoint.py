@@ -8,7 +8,7 @@ from models.base_model import ShopBenchBaseModel
 # from huggingface_hub import snapshot_download
 from vllm.lora.request import LoRARequest
 from vllm import LLM, SamplingParams
-sql_lora_path = 'hy-tmp/KDD/models/fine_tune_lora'
+sql_lora_path = '/hy-tmp/KDD/models/fine_tune_lora'
 from huggingface_hub import snapshot_download
 
 from transformers import AutoModelForCausalLM, AutoTokenizer

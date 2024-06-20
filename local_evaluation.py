@@ -274,10 +274,10 @@ def main():
     # Load development data
     # Please download the development data from : https://www.aicrowd.com/challenges/amazon-kdd-cup-2024-multi-task-online-shopping-challenge-for-llms/dataset_files
     # and place it at: ./data/development.json
-    DATA_FILENAME = "./data/modified.json"
+    # DATA_FILENAME = "./data/modified.json"
     DATA_FILENAME = "./data/development.json"
-    DATA_FILENAME = "./data/yhx.json"
-    DATA_FILENAME = "./data/development.json"
+    # DATA_FILENAME = "./data/test_origin.json"
+    # DATA_FILENAME = "./data/development.json"
 
     if not os.path.exists(DATA_FILENAME):
         raise FileNotFoundError(
