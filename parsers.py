@@ -85,9 +85,6 @@ class ShoppingBenchTaskParsers:
         default_response = -1
         try:
             response = response.strip()
-            print('%' * 100)
-            print(response)
-            print('%' * 100)
             return int(response[0])
         except Exception as e:
             logger.warning(

@@ -27,7 +27,10 @@ def process_func(data):
     example = json.loads(data)
     MAX_LENGTH = 384    # Llama分词器会将一个中文字切分为多个token，因此需要放开一些最大长度，保证数据的完整性
     input_ids, attention_mask, labels = [], [], []
-    instruction = tokenizer(f"<|start_header_id|>user<|end_header_id|>\n\n{'You are a Please help us deal with this'  + example['input_field']}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n", add_special_tokens=False)  # add_special_tokens 不在开头加 special_tokens
+    instruction = tokenizer(f"<|start_header_id|>user<|end_header_id|>\n\n{'You are a helpful online shopping assistant. Please answer the following question about online shopping and follow the given instructions.'}\n\n{example['input_field']}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n", add_special_tokens=False)  # add_special_tokens 不在开头加 special_tokens
+    # if "explain" in example:
+    #     response = tokenizer(f"{example['output_field']}, because: {example['explain']}<|eot_id|>", add_special_tokens=False)
+    # else:
     response = tokenizer(f"{example['output_field']}<|eot_id|>", add_special_tokens=False)
     input_ids = instruction["input_ids"] + response["input_ids"] + [tokenizer.pad_token_id]
     attention_mask = instruction["attention_mask"] + response["attention_mask"] + [1]  # 因为eos token咱们也是要关注的所以 补充为1
@@ -46,7 +49,7 @@ def main():
     global model
     # Process the data
     df = pd.DataFrame(columns=['input_ids', 'attention_mask', 'labels'])
-    with open('./data/yhx-o.json') as file:
+    with open('./data/yhx-o-no_infer.json') as file:
         for i, line in enumerate(file):
             dic = process_func(line)
             df = pd.concat([df, pd.DataFrame(dic)], ignore_index=True)

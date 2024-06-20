@@ -69,10 +69,6 @@ def generate_model_outputs(data_df, model):
         # 重置索引以简化后续的批处理操作
         task_group_data_df = task_group_data_df.reset_index(drop=True)
         
-        # added by lsh
-        print(type(task_group_data_df))
-        print(task_group_data_df)
-        
         # 检查任务类型是否为多项选择
         is_multiple_choice = task_type[0] == "multiple-choice"
 
@@ -115,6 +111,7 @@ def evaluate_outputs(data_df, log_every_n_steps=1):
     Returns:
     - A dictionary containing evaluation metrics and scores for each task.
     """
+    print("->" * 10 + f"line number of evaluate_outputs is  {data_df.shape[0]}")
     # 获取不同评估指标的方法
     eval_methods = get_evaluation_methods()
     # 获取不同任务类型的解析器
@@ -126,7 +123,7 @@ def evaluate_outputs(data_df, log_every_n_steps=1):
     for row_idx, row in tqdm(
         data_df.iterrows(), total=len(data_df), desc="Evaluating"
     ):
-    # 对于每一行，提取任务名称, 任务类型, 评估指标, 真实输出, 和模型生成的输出字符串 
+    # 对于每一行，提取任务名称, 任务类型, 评估指标, 真实输出, 和模型生成的输出字符串
         task_name, task_type, metric, ground_truth, model_output_str, track = (
             row["task_name"],
             row["task_type"],
@@ -156,7 +153,6 @@ def evaluate_outputs(data_df, log_every_n_steps=1):
         # 使用相应的评估函数计算得分
         eval_fn = eval_methods[metric]
         metric_score = eval_fn(model_output, ground_truth)
-
         if task_name not in per_task_metrics:
             per_task_metrics[task_name] = {
                 "task_type": task_type,
@@ -165,6 +161,17 @@ def evaluate_outputs(data_df, log_every_n_steps=1):
             }
 
         per_task_metrics[task_name]["sample_score"].append(metric_score)
+        
+
+        if metric_score == False:
+            print('!' * 50 +  'MYGO DESU' + '!' * 50)
+            print('ERROR SAMPLE IS:')
+            print(row['input_field'])
+            print('The output is:')
+            print(row['model_output_str'])
+            print('The correct answer is:')
+            print(row['output_field'])
+
 
         if (row_idx + 1) % log_every_n_steps == 0:
             # 打印样本的详细信息，包括模型输出、真实输出、评估指标和得分
@@ -279,7 +286,7 @@ def main():
     if args.test == 'origin':
         DATA_FILENAME = './data/development.json'
     elif args.test == 'yhx':
-        DATA_FILENAME = './data/yhx-o.json'
+        DATA_FILENAME = './data/yhx-o-m.json'
     elif args.test == 'generate':
         DATA_FILENAME = './data/modified.json'
 
@@ -296,8 +303,9 @@ def main():
     
     # add outputs to the data_df
     merged_data_df = pd.merge(data_df, df_outputs, on="input_field")
-       
-
+    
+    print(f"after merged:{merged_data_df}\nline number: f{merged_data_df.shape[0]}")
+    print(f"before merged:{df_outputs}\nline number: f{df_outputs.shape[0]}")
     # Evaluate the generated outputs and calculate metrics
     per_task_metrics = evaluate_outputs(merged_data_df)
 
