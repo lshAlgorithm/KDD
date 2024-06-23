@@ -285,6 +285,8 @@ def main():
     DATA_FILENAME = ''
     if args.test == 'origin':
         DATA_FILENAME = './data/development.json'
+    elif args.test == 'plus':
+        DATA_FILENAME = './data/development-plus.json'
     elif args.test == 'yhx':
         DATA_FILENAME = './data/yhx-o-m.json'
     elif args.test == 'generate':

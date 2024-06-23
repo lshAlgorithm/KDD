@@ -155,7 +155,7 @@ class Llama3_8B_Mygo(ShopBenchBaseModel):
         - queries (list of str): A list of queries to be formatted into prompts.
 
         """
-        system_prompt = "You are a helpful online shopping assistant...... Please answer the following question about online shopping and follow the given instructions. Let's think step by step.......\n\n"
+        system_prompt = "You are a helpful online shopping assistant. Please answer the following question about online shopping and follow the given instructions.\n\n"
         formatted_prompts = []
         for prompt in prompts:
             formatted_prompts.append(system_prompt + prompt)
