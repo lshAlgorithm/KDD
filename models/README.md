@@ -18,7 +18,7 @@ pip install peft==0.10.0
 
 MAX_JOBS=8 pip install flash-attn --no-build-isolation
 ```
-    > more to see in requirements.txt
+> more to see in requirements.txt
 * Testing
     * under `myenv` env
     * requirements are in `../requirements.txt`
@@ -27,6 +27,14 @@ MAX_JOBS=8 pip install flash-attn --no-build-isolation
         * `--test` set dataset for evaluation, `origin` as default, you can also use `yhx` to use `yhx -o`.
 * Result
     * Find in './result.md'
+    * Final result after `finetune`
+|Task|Accuracy|
+|---|---|
+|Task8|0.913|
+|Task9|1.000|
+|Task10|0.958|
+|Avg.|0.957|
+      
 
 # Update logs
 * [2024.6.16]Model's name changed to `Llama3_8B_Mygo`
