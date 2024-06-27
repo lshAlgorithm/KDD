@@ -34,6 +34,7 @@ class Llama3_8B_ZeroShotModel(ShopBenchBaseModel):
     def initialize_models(self):
         # Initialize Meta Llama 3 - 8B Instruct Model
         self.model_name = "models/meta-llama/Meta-Llama-3-8B-Instruct"
+        
 
         if not os.path.exists(self.model_name):
             raise Exception(
