@@ -4,28 +4,16 @@
 # 🛒 [Amazon KDD CUP 2024: Multi-Task Online Shopping Challenge for LLMs](https://www.aicrowd.com/challenges/amazon-kdd-cup-2024-multi-task-online-shopping-challenge-for-llms) Starter Kit
 
 
-This repository is the Amazon KDD Cup 2024 **Submission template and Starter kit**! Clone the repository to compete now!
-
 **This repository contains**:
 *  **Documentation** on how to submit your models to the leaderboard
 *  **The procedure** for best practices and information on how we evaluate your model, etc.
-*  **Starter code** for you to get started!
+*  **Final code**: detailed explanation refers to `./models/README.md`
 
-# To-do
-1. [ERRORS TO SOLVE]
-    * when using yhx.json to test
-```powershell
-2024-06-14 18:54:15.438 | WARNING  | parsers:_parse_multichoice:90 - SHOPBENCH_PARSER_WARNING::: Error parsing multichoice response: string index out of range. Responding with default : -1
-[INFO] 2024-06-14 18:54:15,438 - model_output: -1
-[INFO] 2024-06-14 18:54:15,438 - task_type: task10
-[INFO] 2024-06-14 18:54:15,438 - model_output_str:
-Sample 135, generation: -1
-Sample 135, truth: 0
-Per Sample Metric Score (accuracy): False
-```
 2. [IMPROVEMENT]
     * dataset in every mission
+    * finetune
     * chain of thinking
+
 # Table of Contents
 
 1. [Competition Overview](#-competition-overview)
